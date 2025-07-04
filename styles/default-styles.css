@@ -1,26 +1,13 @@
 #my-ext-dropdown-menu-container {
     position: static;
     float: left;
-
+    padding-top: 10px;
     z-index: 9999;
 }
 
 .my-ext-dropdown-menu {
     position: relative;
     display: block;
-}
-
-.my-ext-dropdown-button {
-    background-color: #4CAF50;
-    color: white;
-
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.my-ext-dropdown-button:hover, .my-ext-dropdown-button:focus {
-    background-color: #3e8e41;
 }
 
 .my-ext-menu-list {
@@ -38,7 +25,6 @@
 }
 
 .my-ext-menu-list.show {
-
     z-index: 9999;
     display: block;
 }
@@ -57,10 +43,8 @@
 }
 
 .my-ext-menu-item {
-    padding: 12px 16px;
     text-decoration: none;
     display: block;
-    border-bottom: 1px solid #ddd;
 }
 
 .my-ext-menu-item:hover {
@@ -68,9 +52,8 @@
 }
 
 .my-ext-content-button {
-    display: inline-block;
     width: 100%;
-
+    height: 50px;
 }
 
 .my-ext-edit-button, .my-ext-delete-button, .my-ext-move-up-button, .my-ext-move-down-button, .my-ext-record-button {
@@ -87,21 +70,19 @@
 }
 .my-ext-item-table {
     width: 100%;
-    border: 1px solid #000000;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
 }
 
-.my-ext-add-button {
+.my-ext-add-button, .my-ext-dropdown-button {
+
     background-color: #4CAF50;
     color: white;
-
-    font-size: 16px;
-    border: none;
     cursor: pointer;
-    margin-top: 10px;
+    border-radius: 4px;
 }
 
-.my-ext-add-button:hover, .my-ext-add-button:focus {
+.my-ext-add-button:hover, .my-ext-add-button:focus,.my-ext-dropdown-button:hover {
     background-color: #3e8e41;
 }
 
