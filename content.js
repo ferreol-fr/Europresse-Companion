@@ -91,8 +91,17 @@ function createMenu() {
         if (!/Android/.test(navigator.userAgent)) {
             await chrome.storage.local.get(['menuListSize'], function (result) {
                 if (result.menuListSize.width !== undefined) {
-                    menuList.style.width = result.menuListSize.width;
-                    menuList.style.height = result.menuListSize.height;
+                    if (window.innerWidth >= Number(result.menuListSize.width.replace("px", ""))){
+                        menuList.style.width = result.menuListSize.width;
+                    } else {
+                        menuList.style.width = window.innerWidth + "px";
+                    }
+                    if (window.innerHeight >= Number(result.menuListSize.height.replace("px", ""))){
+                        menuList.style.height = result.menuListSize.height;
+                    } else {
+                        menuList.style.height = window.innerHeight + "px";
+                    }
+
                 }
             });
         }
