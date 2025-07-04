@@ -1,0 +1,105 @@
+#my-ext-dropdown-menu-container {
+    display: inline-flex;
+    float: left;
+
+    z-index: 9999;
+}
+
+.my-ext-dropdown-menu {
+    position: relative;
+    display: block;
+}
+
+.my-ext-dropdown-button {
+    background-color: #4CAF50;
+    color: white;
+
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.my-ext-dropdown-button:hover, .my-ext-dropdown-button:focus {
+    background-color: #3e8e41;
+}
+
+.my-ext-menu-list {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    color: black;
+    min-width: max-content;
+    max-height: max-content;;
+    overflow-y: auto;
+
+    z-index: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+}
+
+.my-ext-menu-list.show {
+    display: block;
+}
+
+.my-ext-menu-search-container {
+    padding: 8px;
+    background-color: #eee;
+}
+
+.my-ext-menu-search {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.my-ext-menu-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ddd;
+}
+
+.my-ext-menu-item:hover {
+    background-color: #f1f1f1;
+}
+
+.my-ext-content-button {
+    display: inline-block;
+    width: 70%;
+}
+
+.my-ext-edit-button, .my-ext-delete-button, .my-ext-move-up-button, .my-ext-move-down-button, .my-ext-record-button {
+    margin: 2px;
+    cursor: pointer;
+    float: right;
+    vertical-align: center;
+}
+
+.my-ext-add-button {
+    background-color: #4CAF50;
+    color: white;
+
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.my-ext-add-button:hover, .my-ext-add-button:focus {
+    background-color: #3e8e41;
+}
+
+.my-ext-menu-item.hidden {
+    display: none;
+}
+
+.my-ext-no-results {
+    padding: 12px 16px;
+    color: #666;
+    text-align: center;
+    display: none;
+}

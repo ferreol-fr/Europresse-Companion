@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Europresse Companion",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Un menu déroulant éditable Qui permet de stoker vos recherches sur Europresse est d'y acceder directement depuis le les sites web de Europresse",
   "permissions": ["storage"],
   "content_scripts": [
@@ -105,14 +105,25 @@
     , "https://nouveau-europresse-com.eu1.proxy.openathens.net/*"
     , "https://nouveau.europresse.com/access/ip/default.aspx?un=U033137T_1"
     ],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "js": ["content.js"]
     }
   ],
+  "web_accessible_resources": [{
+    "resources": ["styles/android-styles.css", "styles/default-styles.css"],
+    "matches": ["<all_urls>"]
+  }],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "homepage_url": "https://github.com/ferreol-fr/Europresse-Companion",
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "58.0",
+      "update_url": "https://github.com/ferreol-fr/Europresse-Companion/releases/latest/download/update_manifest.json",
+      "id": "123027489ferreolfr@users.noreply.github.com"
+    }
   }
 }
 

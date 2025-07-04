@@ -1,5 +1,5 @@
 #my-ext-dropdown-menu-container {
-    display: inline-flex;
+    position: static;
     float: left;
 
     z-index: 9999;
@@ -30,16 +30,19 @@
     color: black;
     min-width: 300px;
     max-height: 600px;
-    overflow-y: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    overflow: scroll;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+
     list-style: none;
     padding: 0;
     margin: 0;
     resize: both;
+
 }
 
 .my-ext-menu-list.show {
+
+    z-index: 9999;
     display: block;
 }
 
@@ -69,14 +72,26 @@
 
 .my-ext-content-button {
     display: inline-block;
-    width: 70%;
+    width: 100%;
+
 }
 
 .my-ext-edit-button, .my-ext-delete-button, .my-ext-move-up-button, .my-ext-move-down-button, .my-ext-record-button {
     margin: 2px;
     cursor: pointer;
     float: right;
+    height: 20px;
+    width: 20px;
     vertical-align: center;
+}
+.my-ext-small-td {
+    height: 20px;
+    width: 20px;
+}
+.my-ext-item-table {
+    width: 100%;
+    border: 1px solid #000000;
+
 }
 
 .my-ext-add-button {
