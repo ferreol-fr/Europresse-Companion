@@ -1,7 +1,7 @@
 
 function createMenu() {
     const path = window.location.pathname;
-    if (path.startsWith("Login")) return;
+    if (path.startsWith("/Login")) return;
 
     let isEdited = false;
 
@@ -52,12 +52,14 @@ function createMenu() {
         items.forEach(item => {
             const criteriaSet = item.criteriaSet;
             const dateRange = item.dateRange;
+            const criteriaExp = item.criteriaExp;
+            console.log("criteriaExp", criteriaExp);
             const menuItem = document.createElement('li');
             menuItem.className = 'my-ext-menu-item';
             menuItem.innerHTML = `
         <table class="my-ext-item-table"><tr><td rowspan="2">
         <button class="my-ext-content-button">${item.text}</button>
-        ${criteriaSet}${dateRange}
+        ${criteriaSet}${dateRange}${criteriaExp}
         </td>
         <td class="my-ext-small-td"><button class="my-ext-edit-button" title="Éditer">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
@@ -158,14 +160,24 @@ function createMenu() {
         let newItemText = document.getElementById('Keywords').value;
         let newItemCriteriaSet = document.getElementById('CriteriaSet').outerHTML;
         let newItemDateRange = document.getElementById('DateRange').outerHTML;
-
+        let newItemCriteriaExp = document.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
+        let criteriaExpHtml = '';
+        if (newItemCriteriaExp.length === 0) {
+            newItemCriteriaExp = "";
+        }else {
+            newItemCriteriaExp.forEach(exp => {
+                criteriaExpHtml += exp.outerHTML;
+            });
+        }
+        console.log('newItemCriteriaExp',newItemCriteriaExp);
         if (newItemText && newItemCriteriaSet) {
-            chrome.storage.local.get(['menuItems'], function(result) {
+            chrome.storage.local.get(['menuItems',], function(result) {
                 const menuItems = result.menuItems || [];
                 menuItems.unshift({ text: newItemText,
                     criteriaSet: newItemCriteriaSet.replace(`id="CriteriaSet"`, ""),
-                    dateRange: newItemDateRange.replace(`id="DateRange"`, "")});
-                saveMenuItems(menuItems, menuContainer);
+                    dateRange: newItemDateRange.replace(`id="DateRange"`, ""),
+                    criteriaExp: criteriaExpHtml });
+                saveMenuItems(menuItems);
             });
         }
     });
@@ -180,7 +192,7 @@ function createMenu() {
     }
 
     // Gérer les autres événements (délégation d'événements)
-    menuList.addEventListener('click', function (e) {
+    menuList.addEventListener('click', async function (e) {
         const target = e.target.closest('button');
         let menuItem;
         try {
@@ -190,28 +202,60 @@ function createMenu() {
         }
         if (!menuItem) return;
 
+        //l'utilisateur lance une recherche sauvegardée
         if (target.classList.contains('my-ext-content-button')) {
-            const menuText = menuItem.querySelector('.my-ext-content-button');
-            const criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
-            const dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
-            console.log(dateRange);
+            let menuText = menuItem.querySelector('.my-ext-content-button');
+            let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
+            let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
             document.getElementById('Keywords').value = menuText.textContent;
-            document.getElementById('CriteriaSet').value = criteriaSet.value;
-            document.getElementById('DateRange').value = dateRange.value;
+            if (document.getElementById('DateRange')) {
+                document.getElementById('DateRange').value = dateRange.value;
+            } else {
+                document.getElementById('DateFilter_DateRange').value = dateRange.value;
+            }
+            if (criteriaSet.value === "-1") {
+                let form = document.querySelector('form');
+                let oldCriteriaExp = form.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
+                for (const exp of oldCriteriaExp){
+                    form.removeChild(exp);
+                }
+                for (const exp of criteriaExp) {
+                    form.appendChild(exp);
+                }
+                let oldCriteriaSet = document.getElementById('CriteriaSet');
+                if (oldCriteriaSet.value === "-1") {
+                    oldCriteriaSet.options.remove(oldCriteriaSet.selectedIndex);
+                }
+                let newCriteriaSet = new Option(criteriaSet.options[criteriaSet.selectedIndex].text, criteriaSet.value);
+                newCriteriaSet.title = criteriaSet.options[criteriaSet.selectedIndex].title;
+                oldCriteriaSet.add(newCriteriaSet);
+                oldCriteriaSet.value = criteriaSet.value;
+
+            } else {
+                document.getElementById('CriteriaSet').value = criteriaSet.value;
+            }
             document.getElementById('btnSearch').click();
         }
 
         console.log('my-ext-edit-button', target);
         if (target.classList.contains('my-ext-edit-button')) {
-            const menuButon = menuItem.querySelector('.my-ext-content-button');
-            const menuButonText = menuButon.textContent;
-            const criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
-            const dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let menuButon = menuItem.querySelector('.my-ext-content-button');
+            let menuButonText = menuButon.textContent;
+            let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
+            let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
+            let criteriaExpHtml = '';
+            if (criteriaExp !== "" && criteriaExp.length > 0) {
+                criteriaExp.forEach(exp => {
+                    criteriaExpHtml += exp.outerHTML;
+                });
+            }
             menuItem.className = 'my-ext-menu-item';
             menuItem.innerHTML = `
         <table class="my-ext-item-table"><tr><td rowspan="2">
         <textarea class="my-ext-content-button">${menuButonText}</textarea>
-        ${criteriaSet.outerHTML}${dateRange.outerHTML}</td>
+        ${criteriaSet.outerHTML}${dateRange.outerHTML}${criteriaExpHtml.outerHTML}</td>
         <td class="my-ext-small-td"><button class="my-ext-record-button" title="Valider les modifications">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
         <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.477-4.425a.235.235 0 0 1 .02-.022z"/>
@@ -239,15 +283,22 @@ function createMenu() {
 
 
         if (target.classList.contains('my-ext-record-button')) {
-            const menuButon = menuItem.querySelector('.my-ext-content-button');
-            const newText = menuButon.value;
-            const criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
-            const dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let menuButon = menuItem.querySelector('.my-ext-content-button');
+            let newText = menuButon.value;
+            let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
+            let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
+            let criteriaExpHtml = '';
+            if (criteriaExp !== "" && criteriaExp.length > 0) {
+                criteriaExp.forEach(exp => {
+                    criteriaExpHtml += exp.outerHTML;
+                });
+            }
             menuItem.className = 'my-ext-menu-item';
             menuItem.innerHTML = `
         <table class="my-ext-item-table"><tr><td rowspan="2">
         <button class="my-ext-content-button">${newText}</button>
-        ${criteriaSet.outerHTML}${dateRange.outerHTML}</td>
+        ${criteriaSet.outerHTML}${dateRange.outerHTML}${criteriaExpHtml.outerHTML}</td>
         <td class="my-ext-small-td"><button class="my-ext-edit-button" title="Éditer">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
           <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
