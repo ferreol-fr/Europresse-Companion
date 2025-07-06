@@ -54,37 +54,7 @@ function createMenu() {
             const dateRange = item.dateRange;
             const criteriaExp = item.criteriaExp;
             console.log("criteriaExp", criteriaExp);
-            const menuItem = document.createElement('li');
-            menuItem.className = 'my-ext-menu-item';
-            menuItem.innerHTML = `
-        <table class="my-ext-item-table"><tr><td rowspan="2">
-        <button class="my-ext-content-button">${item.text}</button>
-        ${criteriaSet}${dateRange}${criteriaExp}
-        </td>
-        <td class="my-ext-small-td"><button class="my-ext-edit-button" title="Éditer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-          <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-        </svg>
-      </button></td>
-      <td class="my-ext-small-td"><button class="my-ext-move-up-button" title="Monter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-        </svg>
-      </button></td></tr>
-      <td class="my-ext-small-td"><button class="my-ext-delete-button" title="Supprimer">
-        <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-        </svg>
-      </button></td>      
-      <td class="my-ext-small-td"><button class="my-ext-move-down-button" title="Descendre">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5a.5.5 0 0 1 .5-.5z"/>
-        </svg>
-      </button>
-      </td></tr></table>
-      `;
+            const menuItem = renderMenuItem(item.text, criteriaSet, dateRange, criteriaExp);
             menuList.insertBefore(menuItem, noResultsMessage);
         });
 
@@ -251,34 +221,8 @@ function createMenu() {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            menuItem.className = 'my-ext-menu-item';
-            menuItem.innerHTML = `
-        <table class="my-ext-item-table"><tr><td rowspan="2">
-        <textarea class="my-ext-content-button">${menuButonText}</textarea>
-        ${criteriaSet.outerHTML}${dateRange.outerHTML}${criteriaExpHtml.outerHTML}</td>
-        <td class="my-ext-small-td"><button class="my-ext-record-button" title="Valider les modifications">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.477-4.425a.235.235 0 0 1 .02-.022z"/>
-        </svg></button></td>
-        <td class="my-ext-small-td"><button class="my-ext-move-up-button" title="Monter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-        </svg>
-      </button></td></tr>
-        <td class="my-ext-small-td"><button class="my-ext-delete-button" title="Supprimer">
-        <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-        </svg>
-      </button></td>  
-      <td class="my-ext-small-td"><button class="my-ext-move-down-button" title="Descendre">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5a.5.5 0 0 1 .5-.5z"/>
-        </svg>
-      </button></td></tr></table>
-      `;
+            menuItem.innerHTML = renderMenuItem(menuButonText, criteriaSet.outerHTML, dateRange.outerHTML, criteriaExpHtml.outerHTML,true).innerHTML;
             isEdited = true;
-
         }
 
 
@@ -294,35 +238,7 @@ function createMenu() {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            menuItem.className = 'my-ext-menu-item';
-            menuItem.innerHTML = `
-        <table class="my-ext-item-table"><tr><td rowspan="2">
-        <button class="my-ext-content-button">${newText}</button>
-        ${criteriaSet.outerHTML}${dateRange.outerHTML}${criteriaExpHtml.outerHTML}</td>
-        <td class="my-ext-small-td"><button class="my-ext-edit-button" title="Éditer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-          <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-        </svg>
-      </button></td>
-      <td class="my-ext-small-td"><button class="my-ext-move-up-button" title="Monter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-        </svg>
-      </button></td></tr>
-      <td class="my-ext-small-td"><button class="my-ext-delete-button" title="Supprimer">
-        <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-        </svg>
-      </button></td>      
-      <td class="my-ext-small-td"><button class="my-ext-move-down-button" title="Descendre">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5a.5.5 0 0 1 .5-.5z"/>
-        </svg>
-      </button>
-      </td></tr></table>
-      `;
+            menuItem.innerHTML = renderMenuItem(newText, criteriaSet.outerHTML, dateRange.outerHTML, criteriaExpHtml.outerHTML,true).innerHTML;
 
             chrome.storage.local.get(['menuItems'], function (result) {
                 const menuItems = result.menuItems || [];
@@ -401,6 +317,55 @@ function createMenu() {
         document.head.appendChild(link);
     }
 }
+function renderMenuItem(text, criteriaSet, dateRange, criteriaExp, isInEditedMode = false) {
+    let searchValue;
+    let editButton;
+    if (isInEditedMode) {
+        searchValue = `<input type="text" class="my-ext-content-button" value="${text}" />`;
+        editButton = `<button class="my-ext-record-button" title="Valider les modifications">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.477-4.425a.235.235 0 0 1 .02-.022z"/>
+        </svg></button>`;
+    } else {
+        searchValue = `<button class="my-ext-content-button">${text}</button>`;
+        editButton = `<button class="my-ext-edit-button" title="Éditer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+          <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+        </svg>
+      </button>`;
+    }
+
+
+    const menuItem = document.createElement('li');
+    menuItem.className = 'my-ext-menu-item';
+    menuItem.innerHTML = `
+        <table class="my-ext-item-table"><tr><td rowspan="2">
+        ${searchValue}
+        ${criteriaSet}${dateRange}${criteriaExp}
+        </td>
+        <td class="my-ext-small-td">${editButton}</td>
+      <td class="my-ext-small-td"><button class="my-ext-move-up-button" title="Monter">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+        </svg>
+      </button></td></tr>
+      <td class="my-ext-small-td"><button class="my-ext-delete-button" title="Supprimer">
+        <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+      </button></td>      
+      <td class="my-ext-small-td"><button class="my-ext-move-down-button" title="Descendre">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5a.5.5 0 0 1 .5-.5z"/>
+        </svg>
+      </button>
+      </td></tr></table>
+      `;
+    return menuItem;
+}
+
 
 // Appeler la fonction pour créer le menu lorsque le DOM est chargé
 if (document.readyState === 'loading') {
