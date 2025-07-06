@@ -5,6 +5,32 @@ function createMenu() {
 
     let isEdited = false;
 
+    if (/Android/.test(navigator.userAgent)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = chrome.runtime.getURL('styles/android-styles.css');
+        document.getElementById('logoIcon').style.display = 'none';
+        document.querySelector('span[title="FACIL\'iti"]').style.display = 'none';
+        document.head.appendChild(link);
+    } else {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = chrome.runtime.getURL('styles/default-styles.css');
+        document.head.appendChild(link);
+    }
+    if (path.startsWith("/Search/Result")) {
+    chrome.storage.local.get(['ddlSortChose'], function (result) {
+        const sortChoice = result.ddlSortChose || false;
+        if (sortChoice !== false) {
+            document.getElementById('ddlSort').value = sortChoice;
+            chrome.storage.local.set({ddlSortChose: false}, function () {
+            });
+        }
+
+    });
+    }
+
+
     // Créer le conteneur du menu
     const menuContainer = document.createElement('div');
     menuContainer.id = 'my-ext-dropdown-menu-container';
@@ -29,7 +55,7 @@ function createMenu() {
   `;
 
     // Ajouter le conteneur au corps de la page
-    document.getElementById('nav').insertBefore(menuContainer,document.getElementById('logoIcon'));
+    document.getElementById('nav').insertBefore(menuContainer, document.getElementById('logoIcon'));
 
     // Récupérer les éléments du DOM
     const menuList = menuContainer.querySelector('.my-ext-menu-list');
@@ -37,7 +63,7 @@ function createMenu() {
     const noResultsMessage = menuContainer.querySelector('.my-ext-no-results');
 
     // Charger les éléments du menu depuis le stockage local
-    chrome.storage.local.get(['menuItems'], function(result) {
+    chrome.storage.local.get(['menuItems'], function (result) {
         const menuItems = result.menuItems || [];
         renderMenuItems(menuItems);
     });
@@ -50,11 +76,13 @@ function createMenu() {
 
         // Ajouter les nouveaux éléments
         items.forEach(item => {
-            const criteriaSet = item.criteriaSet;
-            const dateRange = item.dateRange;
-            const criteriaExp = item.criteriaExp;
+            let criteriaSet = item.criteriaSet;
+            let dateRange = item.dateRange;
+            let criteriaExp = item.criteriaExp;
+            let ddlSort = item.sort;
+
             console.log("criteriaExp", criteriaExp);
-            const menuItem = renderMenuItem(item.text, criteriaSet, dateRange, criteriaExp);
+            const menuItem = renderMenuItem(item.text, criteriaSet, dateRange, ddlSort, criteriaExp);
             menuList.insertBefore(menuItem, noResultsMessage);
         });
 
@@ -69,12 +97,12 @@ function createMenu() {
             await chrome.storage.local.get(['menuListSize'], function (result) {
                 if (!result.menuListSize) return;
                 if (result.menuListSize.width !== undefined) {
-                    if (window.innerWidth >= Number(result.menuListSize.width.replace("px", ""))){
+                    if (window.innerWidth >= Number(result.menuListSize.width.replace("px", ""))) {
                         menuList.style.width = result.menuListSize.width;
                     } else {
                         menuList.style.width = window.innerWidth + "px";
                     }
-                    if (window.innerHeight >= Number(result.menuListSize.height.replace("px", ""))){
+                    if (window.innerHeight >= Number(result.menuListSize.height.replace("px", ""))) {
                         menuList.style.height = result.menuListSize.height;
                     } else {
                         menuList.style.height = window.innerHeight + "px";
@@ -105,7 +133,7 @@ function createMenu() {
     });
 
     // Gérer la recherche
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         const searchTerm = this.value.toLowerCase();
         const menuItems = menuList.querySelectorAll('.my-ext-menu-item');
         let hasVisibleItems = false;
@@ -125,28 +153,32 @@ function createMenu() {
     });
 
     // Gérer l'ajout d'un élément
-    menuContainer.querySelector('.my-ext-add-button').addEventListener('click', function() {
+    menuContainer.querySelector('.my-ext-add-button').addEventListener('click', function () {
 
         let newItemText = document.getElementById('Keywords').value;
         let newItemCriteriaSet = document.getElementById('CriteriaSet').outerHTML;
         let newItemDateRange = document.getElementById('DateRange').outerHTML;
+        let ddlSort = document.getElementById('ddlSort').outerHTML;
         let newItemCriteriaExp = document.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
         let criteriaExpHtml = '';
         if (newItemCriteriaExp.length === 0) {
             newItemCriteriaExp = "";
-        }else {
+        } else {
             newItemCriteriaExp.forEach(exp => {
                 criteriaExpHtml += exp.outerHTML;
             });
         }
-        console.log('newItemCriteriaExp',newItemCriteriaExp);
+        console.log('newItemCriteriaExp', newItemCriteriaExp);
         if (newItemText && newItemCriteriaSet) {
-            chrome.storage.local.get(['menuItems',], function(result) {
+            chrome.storage.local.get(['menuItems',], function (result) {
                 const menuItems = result.menuItems || [];
-                menuItems.unshift({ text: newItemText,
+                menuItems.unshift({
+                    text: newItemText,
                     criteriaSet: newItemCriteriaSet.replace(`id="CriteriaSet"`, ""),
                     dateRange: newItemDateRange.replace(`id="DateRange"`, ""),
-                    criteriaExp: criteriaExpHtml });
+                    sort: ddlSort.replace(`id="ddlSort"`, ""),
+                    criteriaExp: criteriaExpHtml
+                });
                 saveMenuItems(menuItems);
             });
         }
@@ -154,8 +186,8 @@ function createMenu() {
 
     // Fonction pour sauvegarder les éléments du menu
     function saveMenuItems(items) {
-        chrome.storage.local.set({ menuItems: items }, function() {
-            console.log('Menu items saved',items);
+        chrome.storage.local.set({menuItems: items}, function () {
+            console.log('Menu items saved', items);
             // Recharger les éléments après sauvegarde
             renderMenuItems(items);
         });
@@ -177,6 +209,11 @@ function createMenu() {
             let menuText = menuItem.querySelector('.my-ext-content-button');
             let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
             let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let ddlSort = menuItem.querySelector('select[name="Sort"]');
+            if (ddlSort.value !== "1") {
+                chrome.storage.local.set({ddlSortChose: ddlSort.value}, function () {
+                });
+            }
             let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
             document.getElementById('Keywords').value = menuText.textContent;
             if (document.getElementById('DateRange')) {
@@ -184,10 +221,11 @@ function createMenu() {
             } else {
                 document.getElementById('DateFilter_DateRange').value = dateRange.value;
             }
+            //document.getElementById('ddlSort').value = ddlSort.value;
             if (criteriaSet.value === "-1") {
                 let form = document.querySelector('form');
                 let oldCriteriaExp = form.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
-                for (const exp of oldCriteriaExp){
+                for (const exp of oldCriteriaExp) {
                     form.removeChild(exp);
                 }
                 for (const exp of criteriaExp) {
@@ -208,7 +246,6 @@ function createMenu() {
             document.getElementById('btnSearch').click();
         }
 
-        console.log('my-ext-edit-button', target);
         if (target.classList.contains('my-ext-edit-button')) {
             let menuButon = menuItem.querySelector('.my-ext-content-button');
             let menuButonText = menuButon.textContent;
@@ -216,15 +253,15 @@ function createMenu() {
             let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
             let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
             let criteriaExpHtml = '';
+            let ddlSort = menuItem.querySelector('select[name="Sort"]');
             if (criteriaExp !== "" && criteriaExp.length > 0) {
                 criteriaExp.forEach(exp => {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            menuItem.innerHTML = renderMenuItem(menuButonText, criteriaSet.outerHTML, dateRange.outerHTML, criteriaExpHtml.outerHTML,true).innerHTML;
+            menuItem.innerHTML = renderMenuItem(menuButonText, criteriaSet.outerHTML, dateRange.outerHTML, ddlSort.outerHTML, criteriaExpHtml.outerHTML, true).innerHTML;
             isEdited = true;
         }
-
 
         if (target.classList.contains('my-ext-record-button')) {
             let menuButon = menuItem.querySelector('.my-ext-content-button');
@@ -238,7 +275,8 @@ function createMenu() {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            menuItem.innerHTML = renderMenuItem(newText, criteriaSet.outerHTML, dateRange.outerHTML, criteriaExpHtml.outerHTML,true).innerHTML;
+            let ddlSort = menuItem.querySelector('select[name="Sort"]');
+            menuItem.innerHTML = renderMenuItem(newText, criteriaSet.outerHTML, dateRange.outerHTML, ddlSort.outerHTML, criteriaExpHtml.outerHTML, false).innerHTML;
 
             chrome.storage.local.get(['menuItems'], function (result) {
                 const menuItems = result.menuItems || [];
@@ -300,24 +338,9 @@ function createMenu() {
             }
         }
     });
-
-
-
-    if (/Android/.test(navigator.userAgent)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = chrome.runtime.getURL('styles/android-styles.css');
-        document.getElementById('logoIcon').style.display = 'none';
-        document.querySelector('span[title="FACIL\'iti"]').style.display = 'none';
-        document.head.appendChild(link);
-    } else {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = chrome.runtime.getURL('styles/default-styles.css');
-        document.head.appendChild(link);
-    }
 }
-function renderMenuItem(text, criteriaSet, dateRange, criteriaExp, isInEditedMode = false) {
+
+function renderMenuItem(text, criteriaSet, dateRange,ddlSort, criteriaExp, isInEditedMode = false) {
     let searchValue;
     let editButton;
     if (isInEditedMode) {
@@ -335,14 +358,12 @@ function renderMenuItem(text, criteriaSet, dateRange, criteriaExp, isInEditedMod
         </svg>
       </button>`;
     }
-
-
     const menuItem = document.createElement('li');
     menuItem.className = 'my-ext-menu-item';
     menuItem.innerHTML = `
         <table class="my-ext-item-table"><tr><td rowspan="2">
         ${searchValue}
-        ${criteriaSet}${dateRange}${criteriaExp}
+        ${criteriaSet}${dateRange}${ddlSort}${criteriaExp}
         </td>
         <td class="my-ext-small-td">${editButton}</td>
       <td class="my-ext-small-td"><button class="my-ext-move-up-button" title="Monter">
