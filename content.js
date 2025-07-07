@@ -18,18 +18,18 @@ function createMenu() {
         link.href = chrome.runtime.getURL('styles/default-styles.css');
         document.head.appendChild(link);
     }
+
+    // Le choix de tris ne peut être éffectuer qu'après chargement de la page
     if (path.startsWith("/Search/Result")) {
-    chrome.storage.local.get(['ddlSortChose'], function (result) {
-        const sortChoice = result.ddlSortChose || false;
-        if (sortChoice !== false) {
-            document.getElementById('ddlSort').value = sortChoice;
-            chrome.storage.local.set({ddlSortChose: false}, function () {
-            });
-        }
-
-    });
+        chrome.storage.local.get(['ddlSortChose'], function (result) {
+            const sortChoice = result.ddlSortChose || false;
+            if (sortChoice !== false) {
+                document.getElementById('ddlSort').value = sortChoice;
+                chrome.storage.local.set({ddlSortChose: false}, function () {
+                });
+            }
+        });
     }
-
 
     // Créer le conteneur du menu
     const menuContainer = document.createElement('div');
@@ -91,21 +91,21 @@ function createMenu() {
     }
 
     // Gérer l'affichage/masquage du menu
-    menuContainer.querySelector('.my-ext-dropdown-button').addEventListener('click', async function () {
+    menuContainer.querySelector('.my-ext-dropdown-button').addEventListener('click',  function () {
 
         if (!/Android/.test(navigator.userAgent)) {
-            await chrome.storage.local.get(['menuListSize'], function (result) {
+             chrome.storage.local.get(['menuListSize'], function (result) {
                 if (!result.menuListSize) return;
                 if (result.menuListSize.width !== undefined) {
-                    if (window.innerWidth >= Number(result.menuListSize.width.replace("px", ""))) {
+                    if (window.innerWidth - 2 >= Number(result.menuListSize.width.replace("px", ""))) {
                         menuList.style.width = result.menuListSize.width;
                     } else {
-                        menuList.style.width = window.innerWidth + "px";
+                        menuList.style.width = window.innerWidth -2 + "px";
                     }
-                    if (window.innerHeight >= Number(result.menuListSize.height.replace("px", ""))) {
+                    if (window.innerHeight - 2 >= Number(result.menuListSize.height.replace("px", ""))) {
                         menuList.style.height = result.menuListSize.height;
                     } else {
-                        menuList.style.height = window.innerHeight + "px";
+                        menuList.style.height = window.innerHeight -2 + "px";
                     }
 
                 }
@@ -119,16 +119,18 @@ function createMenu() {
     });
 
     // Fermer le menu lorsqu'on clique à l'extérieur
-    document.addEventListener('click', async function (e) {
+    document.addEventListener('click',  function (e) {
         if (!menuContainer.contains(e.target) && !isEdited) {
             if (!/Android/.test(navigator.userAgent) && menuList.style.width !== "") {
                 let menuListSize = {};
                 menuListSize.width = menuList.style.width;
                 menuListSize.height = menuList.style.height;
-                await chrome.storage.local.set({menuListSize: menuListSize});
+                chrome.storage.local.set({menuListSize: menuListSize}, function () {
+                });
             }
             menuList.classList.remove('show');
         }
+        // isEdited = false; contre intuitif mais nécessaire
         isEdited = false;
     });
 
@@ -194,15 +196,38 @@ function createMenu() {
     }
 
     // Gérer les autres événements (délégation d'événements)
-    menuList.addEventListener('click', async function (e) {
-        const target = e.target.closest('button');
-        let menuItem;
-        try {
-            menuItem = target.closest('.my-ext-menu-item');
-        } catch (err) {
+    let selectModified = false;
+    menuList.addEventListener('change',  function (e) {
+        console.log("change", e.target, selectModified);
+        let target = e.target.closest('select');
+        if (target) {
+            selectModified = target;
+            const selectedIndex = selectModified.selectedIndex;
+            const length = selectModified.options.length;
+            for (let i = 0; i < length; i++) {
+                selectModified.options[i].removeAttribute('selected');
+            }
+            selectModified.options[selectedIndex].setAttribute('selected', 'selected');
+        }
+    });
 
+    menuList.addEventListener('click',  function (e) {
+
+        let target = e.target.closest('button');
+
+        if (!target  && selectModified !== false) {
+            target = selectModified;
+        }
+        let menuItem;
+        if (target) {
+            try {
+                menuItem = target.closest('.my-ext-menu-item');
+            } catch (err) {
+
+            }
         }
         if (!menuItem) return;
+        console.log("target", target, e,isEdited,selectModified);
 
         //l'utilisateur lance une recherche sauvegardée
         if (target.classList.contains('my-ext-content-button')) {
@@ -246,28 +271,40 @@ function createMenu() {
             document.getElementById('btnSearch').click();
         }
 
-        if (target.classList.contains('my-ext-edit-button')) {
+
+        if (!menuItem.querySelector('.my-ext-record-button') &&
+            (target.classList.contains('my-ext-edit-button') || selectModified !== false)) {
             let menuButon = menuItem.querySelector('.my-ext-content-button');
-            let menuButonText = menuButon.textContent;
+            let searchText = menuButon.textContent;
+            let allItems = Array.from(menuList.querySelectorAll('.my-ext-menu-item'));
+            allItems.forEach(item => {
+                if (item !== menuItem) {
+                    item.classList.add('disabled-element');
+                }
+            })
+
             let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
             let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let ddlSort = menuItem.querySelector('select[name="Sort"]');
             let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
             let criteriaExpHtml = '';
-            let ddlSort = menuItem.querySelector('select[name="Sort"]');
             if (criteriaExp !== "" && criteriaExp.length > 0) {
                 criteriaExp.forEach(exp => {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            menuItem.innerHTML = renderMenuItem(menuButonText, criteriaSet.outerHTML, dateRange.outerHTML, ddlSort.outerHTML, criteriaExpHtml.outerHTML, true).innerHTML;
+            menuItem.replaceWith(renderMenuItem(searchText, criteriaSet.outerHTML, dateRange.outerHTML,
+                ddlSort.outerHTML, criteriaExpHtml.outerHTML, true));
             isEdited = true;
+            selectModified = false;
         }
 
         if (target.classList.contains('my-ext-record-button')) {
             let menuButon = menuItem.querySelector('.my-ext-content-button');
-            let newText = menuButon.value;
+            let searchText = menuButon.value;
             let criteriaSet = menuItem.querySelector('select[name="CriteriaSet"]');
             let dateRange = menuItem.querySelector('select[name="DateFilter.DateRange"]');
+            let ddlSort = menuItem.querySelector('select[name="Sort"]');
             let criteriaExp = menuItem.querySelectorAll('input[type="hidden"][name^="CriteriaExp["]');
             let criteriaExpHtml = '';
             if (criteriaExp !== "" && criteriaExp.length > 0) {
@@ -275,18 +312,28 @@ function createMenu() {
                     criteriaExpHtml += exp.outerHTML;
                 });
             }
-            let ddlSort = menuItem.querySelector('select[name="Sort"]');
-            menuItem.innerHTML = renderMenuItem(newText, criteriaSet.outerHTML, dateRange.outerHTML, ddlSort.outerHTML, criteriaExpHtml.outerHTML, false).innerHTML;
+            menuItem.replaceWith(renderMenuItem(searchText, criteriaSet.outerHTML, dateRange.outerHTML, ddlSort.outerHTML,
+                criteriaExpHtml.outerHTML, false));
 
+            const allItems = Array.from(menuList.querySelectorAll('.my-ext-menu-item'));
+            allItems.forEach(item => {
+                if (item !== menuItem) {
+                    item.classList.remove('disabled-element');
+                }
+            })
             chrome.storage.local.get(['menuItems'], function (result) {
                 const menuItems = result.menuItems || [];
-                const allItems = Array.from(menuList.querySelectorAll('.my-ext-menu-item'));
                 const index = allItems.indexOf(menuItem);
                 if (index !== -1) {
-                    menuItems[index].text = newText;
-                    saveMenuItems(menuItems, menuContainer);
+                    menuItems[index].text = searchText;
+                    menuItems[index].criteriaSet = criteriaSet.outerHTML;
+                    menuItems[index].dateRange = dateRange.outerHTML;
+                    menuItems[index].sort = ddlSort.outerHTML;
+                    menuItems[index].criteriaExp = criteriaExpHtml;
+                    saveMenuItems(menuItems);
                 }
             });
+            selectModified = false;
             isEdited = true;
         }
 
@@ -297,7 +344,7 @@ function createMenu() {
                 const index = allItems.indexOf(menuItem);
                 if (index !== -1) {
                     menuItems.splice(index, 1);
-                    saveMenuItems(menuItems, menuContainer);
+                    saveMenuItems(menuItems);
                 }
             });
         }
@@ -315,7 +362,7 @@ function createMenu() {
                     const menuItems = result.menuItems || [];
                     // Échanger les éléments dans le tableau
                     [menuItems[index], menuItems[index - 1]] = [menuItems[index - 1], menuItems[index]];
-                    saveMenuItems(menuItems, menuContainer);
+                    saveMenuItems(menuItems);
                 });
             }
         }
@@ -333,7 +380,7 @@ function createMenu() {
                     const menuItems = result.menuItems || [];
                     // Échanger les éléments dans le tableau
                     [menuItems[index], menuItems[index + 1]] = [menuItems[index + 1], menuItems[index]];
-                    saveMenuItems(menuItems, menuContainer);
+                    saveMenuItems(menuItems);
                 });
             }
         }
@@ -343,6 +390,7 @@ function createMenu() {
 function renderMenuItem(text, criteriaSet, dateRange,ddlSort, criteriaExp, isInEditedMode = false) {
     let searchValue;
     let editButton;
+    if (criteriaExp === undefined) criteriaExp = "";
     if (isInEditedMode) {
         searchValue = `<input type="text" class="my-ext-content-button" value="${text}" />`;
         editButton = `<button class="my-ext-record-button" title="Valider les modifications">
