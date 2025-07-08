@@ -34,7 +34,7 @@ Encourager le soutien aux médias
 Rappels sur la valeur de l'information
 vers les options d'abonnement,
 Sensibilisation aux modèles économiques,
-Ouvrir le débat sur l'accès à l'information
+Ouvrir le débat sur l'accès à l'information.
 
 Comment partager sans détruire ?
 Quels modèles économiques durables ?
