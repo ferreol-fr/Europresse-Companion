@@ -10,19 +10,20 @@ Je développe des outils pour faciliter l'accès à l'information. Mais je suis 
 
 Notre dilemme partagé :
 
-D'un côté, il est essentiel de :
-• Donner accès à l'information à tous
-• Lutter contre la désinformation
-• Permettre une société mieux informée
+D'un côté, il est essentiel de :<br/>
+• Donner accès à l'information à tous.<br/>
+• Lutter contre la désinformation.<br/>
+• Permettre une société mieux informée.
 
-Mais de l'autre, nous savons que :
-• L'information de qualité coûte cher à produire
-• Les médias ont besoin de revenus pour survivre
+Mais de l'autre, nous savons que :<br/>
+• L'information de qualité coûte cher à produire<br/>
+• Les médias ont besoin de revenus pour survivre<br/>
 • Sans financement, la qualité de l'information se dégrade
 
 Notre approche :
 
-Nous cherchons un équilibre délicat. Nos outils sont conçus pour :
+Nous cherchons un équilibre délicat.<br/>
+Nos outils sont conçus pour :
 
 Faciliter l'accès sans nuire aux médias
 
@@ -36,32 +37,31 @@ vers les options d'abonnement,
 Sensibilisation aux modèles économiques,
 Ouvrir le débat sur l'accès à l'information.
 
-Comment partager sans détruire ?
-Quels modèles économiques durables ?
-Quelle responsabilité collective ?
+Comment partager sans détruire ?<br/>
+Quels modèles économiques durables ?<br/>
+Quelle responsabilité collective ?<br/><br/>
 Notre engagement :
 
 Nous ne développerons jamais d'outil qui :
 
-Contourne les modèles de financement existants
-Encourage une consommation irresponsable
-Met en danger la viabilité des médias
+Contourne les modèles de financement existants<br/>
+Encourage une consommation irresponsable<br/>
+Met en danger la viabilité des médias<br/><br/>
 Nous croyons plutôt que :
 
-La connaissance doit circuler
-Mais elle a besoin de soutien pour vivre
-C'est notre responsabilité collective de trouver un équilibre
+La connaissance doit circuler, Mais elle a besoin de soutien pour vivre.
+C'est notre responsabilité collective de trouver un équilibre.<br/>
 Comment contribuer ?
 
-Si vous utilisez nos outils :
-• Considérez à soutenir les médias que vous consultez
-• Partagez l'information, mais aussi la conscience de son coût
-• Participez à la réflexion sur ces enjeux
+Si vous utilisez nos outils :<br/>
+• Considérez à soutenir les médias que vous consultez<br/>
+• Partagez l'information, mais aussi la conscience de son coût<br/>
+• Participez à la réflexion sur ces enjeux<br/>
 
-Si vous êtes un média :
-• Soyez transparent sur vos besoins financiers
-• Explorez des modèles innovants
-• Dialoguez avec nous sur ces équilibres délicats
+Si vous êtes un média :<br/>
+• Soyez transparent sur vos besoins financiers<br/>
+• Explorez des modèles innovants<br/>
+• Dialoguez avec nous sur ces équilibres délicats<br/>
 
 L'information est un bien commun trop précieux pour le laisser disparaître. Mais pour qu'elle survive, nous devons tous reconnaître sa valeur et la soutenir.
 Nous croyons plutôt que :
@@ -71,15 +71,15 @@ Mais elle a besoin de soutien pour vivre
 C'est notre responsabilité collective de trouver un équilibre
 Comment contribuer ?
 
-Si vous utilisez nos outils :
-• Considérez à soutenir les médias que vous consultez
-• Partagez l'information, mais aussi la conscience de son coût
-• Participez à la réflexion sur ces enjeux
+Si vous utilisez nos outils :<br/>
+• Considérez à soutenir les médias que vous consultez<br/>
+• Partagez l'information, mais aussi la conscience de son coût<br/>
+• Participez à la réflexion sur ces enjeux<br/>
 
-Si vous êtes un média :
-• Soyez transparent sur vos besoins financiers
-• Explorez des modèles innovants
-• Dialoguez avec nous sur ces équilibres délicats
+Si vous êtes un média :<br/>
+• Soyez transparent sur vos besoins financiers<br/>
+• Explorez des modèles innovants<br/>
+• Dialoguez avec nous sur ces équilibres délicats<br/>
 
 L'information est un bien commun trop précieux pour le laisser disparaître. Mais pour qu'elle survive, nous devons tous reconnaître sa valeur et la soutenir.
 
