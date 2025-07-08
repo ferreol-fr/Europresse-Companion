@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Europresse Companion",
-  "version": "0.3",
+  "version": "0.8",
   "description": "Un menu déroulant éditable Qui permet de stoker vos recherches sur Europresse est d'y acceder directement depuis le les sites web de Europresse",
   "permissions": ["storage"],
+  "options_ui": {
+    "page": "options_ui.html"
+  },
   "content_scripts": [
     {
       "matches": [
