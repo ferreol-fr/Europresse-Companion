@@ -32,7 +32,7 @@ Mais avec conscience des enjeux économiques
 Encourager le soutien aux médias
 
 Rappels sur la valeur de l'information
-Liens vers les options d'abonnement
+vers les options d'abonnement
 Sensibilisation aux modèles économiques
 Ouvrir le débat sur l'accès à l'information
 
