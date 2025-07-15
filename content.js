@@ -1,9 +1,23 @@
+let settings = {};
+
+function getSettings() {
+    return new Promise((accept) => {
+        chrome.storage.local.get(['Europresse_Companion_SETTINGS'], function (result) {
+            if (result !== undefined) {
+                settings = result.Europresse_Companion_SETTINGS;
+                accept(settings);
+            }
+            else accept(false);
+        });
+    });
+}
 
 function createMenu() {
     const path = window.location.pathname;
     if (path.startsWith("/Login")) return;
 
     let isEdited = false;
+
 
     if (/Android/.test(navigator.userAgent)) {
         const link = document.createElement('link');
@@ -13,6 +27,12 @@ function createMenu() {
         document.querySelector('span[title="FACIL\'iti"]').style.display = 'none';
         document.head.appendChild(link);
     } else {
+        console.log("hide_welcome_banner",
+            settings, settings.hide_welcome_banner)
+        if (settings !== false && settings.hide_welcome_banner === true) {
+            console.log("hide_welcome_banner");
+            document.getElementById('welcomeText').remove();
+        }
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = chrome.runtime.getURL('styles/default-styles.css');
@@ -91,21 +111,21 @@ function createMenu() {
     }
 
     // Gérer l'affichage/masquage du menu
-    menuContainer.querySelector('.my-ext-dropdown-button').addEventListener('click',  function () {
+    menuContainer.querySelector('.my-ext-dropdown-button').addEventListener('click', function () {
 
         if (!/Android/.test(navigator.userAgent)) {
-             chrome.storage.local.get(['menuListSize'], function (result) {
-                if (!result.menuListSize) return;
+            chrome.storage.local.get(['menuListSize'], function (result) {
+                if (result.length === undefined) return;
                 if (result.menuListSize.width !== undefined) {
                     if (window.innerWidth - 2 >= Number(result.menuListSize.width.replace("px", ""))) {
                         menuList.style.width = result.menuListSize.width;
                     } else {
-                        menuList.style.width = window.innerWidth -2 + "px";
+                        menuList.style.width = window.innerWidth - 2 + "px";
                     }
                     if (window.innerHeight - 2 >= Number(result.menuListSize.height.replace("px", ""))) {
                         menuList.style.height = result.menuListSize.height;
                     } else {
-                        menuList.style.height = window.innerHeight -2 + "px";
+                        menuList.style.height = window.innerHeight - 2 + "px";
                     }
 
                 }
@@ -119,7 +139,7 @@ function createMenu() {
     });
 
     // Fermer le menu lorsqu'on clique à l'extérieur
-    document.addEventListener('click',  function (e) {
+    document.addEventListener('click', function (e) {
         if (!menuContainer.contains(e.target) && !isEdited) {
             if (!/Android/.test(navigator.userAgent) && menuList.style.width !== "") {
                 let menuListSize = {};
@@ -171,7 +191,7 @@ function createMenu() {
             });
         }
         console.log('newItemCriteriaExp', newItemCriteriaExp);
-        if (newItemText && newItemCriteriaSet) {
+        if (newItemText || newItemCriteriaSet) {
             chrome.storage.local.get(['menuItems',], function (result) {
                 const menuItems = result.menuItems || [];
                 menuItems.unshift({
@@ -197,7 +217,7 @@ function createMenu() {
 
     // Gérer les autres événements (délégation d'événements)
     let selectModified = false;
-    menuList.addEventListener('change',  function (e) {
+    menuList.addEventListener('change', function (e) {
         console.log("change", e.target, selectModified);
         let target = e.target.closest('select');
         if (target) {
@@ -211,11 +231,11 @@ function createMenu() {
         }
     });
 
-    menuList.addEventListener('click',  function (e) {
+    menuList.addEventListener('click', function (e) {
 
         let target = e.target.closest('button');
 
-        if (!target  && selectModified !== false) {
+        if (!target && selectModified !== false) {
             target = selectModified;
         }
         let menuItem;
@@ -227,7 +247,7 @@ function createMenu() {
             }
         }
         if (!menuItem) return;
-        console.log("target", target, e,isEdited,selectModified);
+        console.log("target", target, e, isEdited, selectModified);
 
         //l'utilisateur lance une recherche sauvegardée
         if (target.classList.contains('my-ext-content-button')) {
@@ -385,6 +405,11 @@ function createMenu() {
             }
         }
     });
+
+    // S'il n'y a pas de recherche à sauvegarder, on déactive le bouton
+    if (!path.startsWith("/Search/Result")) {
+        menuContainer.querySelector('.my-ext-add-button').classList.add("disabled-element");
+    }
 }
 
 function renderMenuItem(text, criteriaSet, dateRange,ddlSort, criteriaExp, isInEditedMode = false) {
@@ -439,10 +464,16 @@ function renderMenuItem(text, criteriaSet, dateRange,ddlSort, criteriaExp, isInE
     return menuItem;
 }
 
-
-// Appeler la fonction pour créer le menu lorsque le DOM est chargé
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createMenu);
-} else {
+getSettings().then((retrievedSettings) => {
+    settings = retrievedSettings;
+    // Appeler la fonction pour créer le menu lorsque le DOM est chargé
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', createMenu);
+    } else {
     createMenu();
-}
+    }
+});
+
+
+
+
