@@ -58,6 +58,18 @@
             Cacher le bandeau "Bienvenue sur Europresse"
         </label>
     </fieldset>
+    <fieldset>
+        <legend>Importation et exportation des données</legend>
+        <button id="export_data" >
+            exporter les recherches dans un fichier JSON
+        </button><br><br>
+        <label>Importation les recherches d'un fichier JSON</label>
+        <input type="file" id="import_fileInput"  accept=".json" />
+        <div id="import_result"></div>
+        <button id="import_data" hidden>
+            importer
+        </button>
+    </fieldset>
 </form>
 <script src="options_ui.js"></script>
 </body>

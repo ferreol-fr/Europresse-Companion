@@ -3,7 +3,7 @@ let settings = {};
 function getSettings() {
     return new Promise((accept) => {
         chrome.storage.local.get(['Europresse_Companion_SETTINGS'], function (result) {
-            if (result !== undefined) {
+            if (result.Europresse_Companion_SETTINGS !== undefined) {
                 settings = result.Europresse_Companion_SETTINGS;
                 accept(settings);
             }
@@ -27,8 +27,6 @@ function createMenu() {
         document.querySelector('span[title="FACIL\'iti"]').style.display = 'none';
         document.head.appendChild(link);
     } else {
-        console.log("hide_welcome_banner",
-            settings, settings.hide_welcome_banner)
         if (settings !== false && settings.hide_welcome_banner === true) {
             console.log("hide_welcome_banner");
             document.getElementById('welcomeText').remove();

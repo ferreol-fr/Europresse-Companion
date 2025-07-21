@@ -1,4 +1,9 @@
 const hideWelcomeCheckbox = document.getElementById("hide_welcome_banner");
+const exportDataButton = document.getElementById("export_data");
+const importDataButton = document.getElementById("import_data");
+const import_fileInput = document.getElementById('import_fileInput');
+const isAndroid = /Android/.test(navigator.userAgent);
+let fileToImport = false;
 const DEFAULT_SETTINGS = {
     hide_welcome_banner: false,
 };
@@ -12,6 +17,55 @@ hideWelcomeCheckbox.onchange = () => {
     settings.hide_welcome_banner = hideWelcomeCheckbox.checked;
     setSettings(settings);
 };
+
+exportDataButton.onclick= () => {
+    chrome.storage.local.get(['menuItems'], function (result) {
+        if (result !== undefined) {
+            const data = JSON.stringify(result);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            chrome.downloads.download({
+                url: url,
+                filename: 'Europresse_Companion_datta.json',
+                saveAs: true
+            });
+        }
+    });
+}
+
+import_fileInput.addEventListener('change', function (e) {
+    fileToImport = e.target.files[0];
+    importDataButton.style.display = "block";
+})
+
+importDataButton.onclick= () => {
+
+    console.log("analyse du JSON :",fileToImport);
+    if (!fileToImport) {
+        return;
+    }
+    const reader = new FileReader();
+    reader.readAsText(fileToImport);
+    reader.onload = function(e) {
+        const contents = e.target.result.toString();
+        try {
+            const json = JSON.parse(contents);
+            console.log('Fichier JSON importé :',contents, json);
+            chrome.storage.local.set(json, function () {
+                console.log('Menu items saved', json);
+
+            });
+
+        } catch (error) {
+            console.error("Erreur lors de l'analyse du JSON :", error);
+            alert("Erreur lors de l'analyse du JSON.");
+        }
+    };
+    fileToImport = false;
+    importDataButton.style.display = "none";
+
+}
+
 
 /**
  * @returns {Promise<typeof DEFAULT_SETTINGS>}
@@ -37,14 +91,12 @@ function setSettings(settings) {
     );
 }
 
-function isNotAndroid() {
-    return !/Android/.test(navigator.userAgent);
-}
+
 
 // Récupération des paramètres et initialisation de l'interface
 getSettings().then((retrievedSettings) => {
     // ======== Si le navigateur fonctionne sous Android l'on ne montre pas l'option Cacher la bannière de bienvenue ========
-    if (isNotAndroid()) {
+    if (!isAndroid) {
         document.getElementById("hide_welcome_banner_label").style.display = "block";
     }
     settings = retrievedSettings;
