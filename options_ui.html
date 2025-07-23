@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8" />
     <title>Europresse companion configuration</title>
@@ -65,10 +65,18 @@
         </button><br><br>
         <label>Importation les recherches d'un fichier JSON</label>
         <input type="file" id="import_fileInput"  accept=".json" />
-        <div id="import_result"></div>
-        <button id="import_data" hidden>
+        <div id="import_div" hidden>
+            <p>
+        <input type="radio" id="add_to_search" checked="checked" name="import_radio" />
+        <label for="add_to_search">Ajouter aux recherches existantes</label>
+        <input type="radio" id="replace_existing_search"  name="import_radio" />
+        <label for="replace_existing_search">Remplacer les recherches existantes</label>
+            </p>
+        <button id="import_data" >
             importer
         </button>
+        </div>
+        <br>
     </fieldset>
 </form>
 <script src="options_ui.js"></script>

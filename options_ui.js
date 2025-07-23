@@ -2,6 +2,9 @@ const hideWelcomeCheckbox = document.getElementById("hide_welcome_banner");
 const exportDataButton = document.getElementById("export_data");
 const importDataButton = document.getElementById("import_data");
 const import_fileInput = document.getElementById('import_fileInput');
+const importDiv = document.getElementById('import_div');
+const addToSearch = document.getElementById('add_to_search');
+const replaceExistingSearch = document.getElementById('replace_existing_search');
 const isAndroid = /Android/.test(navigator.userAgent);
 let fileToImport = false;
 const DEFAULT_SETTINGS = {
@@ -35,11 +38,10 @@ exportDataButton.onclick= () => {
 
 import_fileInput.addEventListener('change', function (e) {
     fileToImport = e.target.files[0];
-    importDataButton.style.display = "block";
+    importDiv.style.display = "block";
 })
 
 importDataButton.onclick= () => {
-
     console.log("analyse du JSON :",fileToImport);
     if (!fileToImport) {
         return;
@@ -51,18 +53,29 @@ importDataButton.onclick= () => {
         try {
             const json = JSON.parse(contents);
             console.log('Fichier JSON importé :',contents, json);
+            if (replaceExistingSearch.checked) {
             chrome.storage.local.set(json, function () {
                 console.log('Menu items saved', json);
-
             });
+            } else {
+                chrome.storage.local.get(['menuItems'], function (result) {
+                    if (result !== undefined) {
+                        let menuItems = result.menuItems || [];
+                        menuItems = menuItems.concat(json.menuItems);
+                        chrome.storage.local.set({menuItems: menuItems}, function () {
+                            console.log('Menu items saved', menuItems);
+                        });
+                    }
 
+                })
+            }
         } catch (error) {
             console.error("Erreur lors de l'analyse du JSON :", error);
             alert("Erreur lors de l'analyse du JSON.");
         }
     };
     fileToImport = false;
-    importDataButton.style.display = "none";
+    importDiv.style.display = "none";
 
 }
 
