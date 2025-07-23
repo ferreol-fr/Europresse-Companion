@@ -113,7 +113,7 @@ function createMenu() {
 
         if (!/Android/.test(navigator.userAgent)) {
             chrome.storage.local.get(['menuListSize'], function (result) {
-                if (result.length === undefined) return;
+                if (result === undefined) return;
                 if (result.menuListSize.width !== undefined) {
                     if (window.innerWidth - 2 >= Number(result.menuListSize.width.replace("px", ""))) {
                         menuList.style.width = result.menuListSize.width;
